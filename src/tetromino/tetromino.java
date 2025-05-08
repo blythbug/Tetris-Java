@@ -82,7 +82,7 @@ public class tetromino {
         }
 
         for(int i = 0; i < b.length; i++){
-            if (b[i].y + block.SIZE == gameplayManage.right_x) {
+            if (b[i].x + block.SIZE == gameplayManage.right_x) {
                 collisionRight = true;
                 break;
             }
