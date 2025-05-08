@@ -128,6 +128,7 @@ public class gameplayManage {
         int x = left_x;
         int y = top_y;
         int blockCounter = 0;
+        int lineCounter = 0;
 
         while( x < right_x && y < bottom_y){
 
@@ -150,6 +151,25 @@ public class gameplayManage {
                         }
                     }
 
+                    // increase line counter and lines
+                    lineCounter++;
+                    lines++;
+
+                    // if line score hits a certain number, increase drop speed
+                    // 60 = Slowest 1 = Fastest
+                    // Every 10 lines, level and drop speed increases [by -10]
+                    if(lines % 10 == 0 && dropInterval > 1){
+
+                        level++;
+                        if(dropInterval > 10){
+                            dropInterval -= 10;
+                        }
+                        // when drop interval is 10 or less, decrease by 1
+                        else {
+                            dropInterval -= 1;
+                        }
+                    }
+
                     //shift all lines down by 1
                     for(int i = 0; i < staticBlocks.size(); i++){
                         // if block is above the current y, move it down by block size
@@ -162,6 +182,13 @@ public class gameplayManage {
                 x = left_x;
                 y += block.SIZE;
             }
+
+        }
+
+        // Add Score
+        if(lineCounter > 0){
+            int singleLineScore = 10* level;
+            score += singleLineScore * lineCounter;
 
         }
 
@@ -187,8 +214,8 @@ public class gameplayManage {
         y = 390;
         g2.setFont(new Font("Arial", Font.BOLD, 15));
         g2.drawString("LEVEL: " + level, x, y); y+= 70;
-        g2.drawString("LINES CLEAR: " + level, x, y); y+= 70;
-        g2.drawString("SCORE: " + level, x, y); y+= 70;
+        g2.drawString("LINES CLEAR: " + lines, x, y); y+= 70;
+        g2.drawString("SCORE: " + score, x, y); y+= 70;
 
         // draw current tetromino
         if(currentMino != null) {         // check if null to avoid NullPointerException errors
