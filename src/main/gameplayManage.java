@@ -98,10 +98,57 @@ public class gameplayManage {
             currentMino.setXY(MINO_INIT_X, MINO_INIT_Y);
             nextMino = pickMino();
             nextMino.setXY(NEXTMINO_X,NEXTMINO_Y);
+
+            // when a tetromino becomes inactive, check if lines can be cleared
+            clearValid();
         }
         else{
             currentMino.update();
         }
+    }
+
+    private void clearValid(){
+
+        int x = left_x;
+        int y = top_y;
+        int blockCounter = 0;
+
+        while( x < right_x && y < bottom_y){
+
+            // scan game area by block size
+            for(int i = 0; i < staticBlocks.size(); i++)
+                if (staticBlocks.get(i).x == x && staticBlocks.get(i).y == y) {
+                    // if there is a static block, increase block counter
+                    blockCounter++;
+                }
+
+            x += block.SIZE;
+
+            if(x == right_x){
+
+                if(blockCounter == 12){   // check if block counter hits 12 (max)
+                    for(int i = staticBlocks.size()-1; i > -1; i--){
+                        // remove all blocks in current y line
+                        if(staticBlocks.get(i).y == y){
+                            staticBlocks.remove(i);
+                        }
+                    }
+
+                    //shift all lines down by 1
+                    for(int i = 0; i < staticBlocks.size(); i++){
+                        // if block is above the current y, move it down by block size
+                        if(staticBlocks.get(i).y < y) {
+                            staticBlocks.get(i).y += block.SIZE;
+                        }
+                    }
+                }
+                blockCounter = 0;
+                x = left_x;
+                y += block.SIZE;
+            }
+
+        }
+
     }
     public void draw(Graphics2D g2){
 
