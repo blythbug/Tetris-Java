@@ -78,8 +78,8 @@ public class tetromino {
         collisionRight = false;
         collisionBottom = false;
 
-        // check game area boundary collisions
-        // left border
+        // check if colliding with static blocks
+        StaticBlockCollisionValid();
 
         // scan block array and check x value
         // if x value is equal to the game border's left x , tetromino is touching the left wall
