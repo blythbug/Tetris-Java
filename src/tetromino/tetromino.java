@@ -96,6 +96,14 @@ public class tetromino {
     }
     public void RotationCollisionValid() {
 
+        // reset booleans
+        collisionLeft = false;
+        collisionRight = false;
+        collisionBottom = false;
+
+        // check if colliding with static blocks
+        StaticBlockCollisionValid();
+
         if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x < gameplayManage.left_x)) {
             collisionLeft = true;
         }
@@ -105,6 +113,36 @@ public class tetromino {
         }
         if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + block.SIZE > gameplayManage.bottom_y)) {
             collisionBottom = true;
+        }
+    }
+    private void StaticBlockCollisionValid(){
+
+        // scan staticBlocks array
+        for(int i = 0; i < gameplayManage.staticBlocks.size(); i++){
+
+            // get each block's x and y and check left, right and down collision
+            int block_x = gameplayManage.staticBlocks.get(i).x;
+            int block_y = gameplayManage.staticBlocks.get(i).y;
+
+
+            // bottom collision
+            for(int j = 0; j < b.length; j++){
+                if(b[j].y + block.SIZE == block_y && b[j].x == block_x){   // if tetromino x/ y coord + block size = static block x/y coord
+                    collisionBottom = true;                                // then static block is right below a current tetromino ; collision occurs
+                }
+            }
+            // right collision
+            for(int j = 0; j < b.length; j++){
+                if(b[j].x + block.SIZE == block_x && b[j].y == block_y){
+                    collisionRight = true;
+                }
+            }
+            // left collision
+            for(int j = 0; j < b.length; j++){
+                if(b[j].x - block.SIZE == block_x && b[j].y == block_y){
+                    collisionLeft = true;
+                }
+            }
         }
     }
 
