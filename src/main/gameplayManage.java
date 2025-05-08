@@ -64,18 +64,16 @@ public class gameplayManage {
         tetromino mino = null;
         int i = new Random().nextInt(7);
 
-        switch(i) {
-            case 0: mino = new L1_mino();break;
-            case 1: mino = new L2_mino();break;
-            case 2: mino = new bar_mino();break;
-            case 3: mino = new snake1_mino();break;
-            case 4: mino = new snake2_mino();break;
-            case 5: mino = new T_mino();break;
-            case 6: mino = new square_mino();break;
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + i);
-        }
+        mino = switch (i) {
+            case 0 -> new L1_mino();
+            case 1 -> new L2_mino();
+            case 2 -> new bar_mino();
+            case 3 -> new snake1_mino();
+            case 4 -> new snake2_mino();
+            case 5 -> new T_mino();
+            case 6 -> new square_mino();
+            default -> throw new IllegalStateException("Unexpected value: " + i);
+        };
         return mino;
     }
 
@@ -84,7 +82,7 @@ public class gameplayManage {
     public void update(){
 
         // check if current tetromino is active
-        if(currentMino.active == false){
+        if(!currentMino.active){
 
             // if tetromino is not active, put into staticBlocks
 
@@ -92,6 +90,8 @@ public class gameplayManage {
             staticBlocks.add(currentMino.b[1]);
             staticBlocks.add(currentMino.b[2]);
             staticBlocks.add(currentMino.b[3]);
+
+            currentMino.sleep = false;
 
             // replace currentMino with nextMino
             currentMino = nextMino;
