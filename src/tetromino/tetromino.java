@@ -5,6 +5,7 @@ import main.KeyHandler;
 import main.gameplayManage;
 
 import java.awt.*;
+import java.util.stream.IntStream;
 
 // super class for all tetrominoes  (inheritance DOC)
 public class tetromino {
@@ -74,24 +75,17 @@ public class tetromino {
         // check game area boundary collisions
         // left border
 
-        for(int i =0; i < b.length; i++) {      // scan block array and check x value
-            if (b[i].x == gameplayManage.left_x) {   // if x value is equal to the game border's left x , tetromino is touching the left wall
-                collisionLeft = true;
-                break;
-            }
+        // scan block array and check x value
+        // if x value is equal to the game border's left x , tetromino is touching the left wall
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x == gameplayManage.left_x)) {
+            collisionLeft = true;
         }
 
-        for(int i = 0; i < b.length; i++){
-            if (b[i].x + block.SIZE == gameplayManage.right_x) {
-                collisionRight = true;
-                break;
-            }
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + block.SIZE == gameplayManage.right_x)) {
+            collisionRight = true;
         }
-        for(int i = 0; i < b.length; i++){
-            if (b[i].y + block.SIZE == gameplayManage.bottom_y) {
-                collisionBottom = true;
-                break;
-            }
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + block.SIZE == gameplayManage.bottom_y)) {
+            collisionBottom = true;
         }
     }
     public void RotationCollisionValid() {}
