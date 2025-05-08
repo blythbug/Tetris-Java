@@ -37,6 +37,11 @@ public class gameplayManage {
     // game over
     public boolean gameOver;
 
+    // score and level
+    int level = 1;
+    int lines;
+    int score;
+
     public gameplayManage() {
 
         // Game Area Frame
@@ -175,6 +180,15 @@ public class gameplayManage {
         // next label
         g2.setFont(new Font("Arial", Font.BOLD, 20));
         g2.drawString("NEXT", x + 70, y - 10); // Adjust text position
+
+        // score frame
+        g2.drawRect(x, bottom_y - 320, 200, 300);
+        x += 20;
+        y = 390;
+        g2.setFont(new Font("Arial", Font.BOLD, 15));
+        g2.drawString("LEVEL: " + level, x, y); y+= 70;
+        g2.drawString("LINES CLEAR: " + level, x, y); y+= 70;
+        g2.drawString("SCORE: " + level, x, y); y+= 70;
 
         // draw current tetromino
         if(currentMino != null) {         // check if null to avoid NullPointerException errors
