@@ -39,20 +39,25 @@ public class tetromino {
     public void setXY(int x, int y){}
     public void updateXY(int direction){
 
-        this.direction = direction;
+        RotationCollisionValid();
 
-        // if collision occurs when the tetromino is rotating, the rotation must be canceled
-        // original position is stored in tempB array instead of updating X and Y
-        // original position can then be restored
+        if(!collisionLeft && !collisionRight && !collisionBottom){
+            this.direction = direction;
 
-        b[0].x = tempB[0].x;
-        b[0].y = tempB[0].y;
-        b[1].x = tempB[1].x;
-        b[1].y = tempB[1].y;
-        b[2].x = tempB[2].x;
-        b[2].y = tempB[2].y;
-        b[3].x = tempB[3].x;
-        b[3].y = tempB[3].y;
+            // if collision occurs when the tetromino is rotating, the rotation must be canceled
+            // original position is stored in tempB array instead of updating X and Y
+            // original position can then be restored
+
+            b[0].x = tempB[0].x;
+            b[0].y = tempB[0].y;
+            b[1].x = tempB[1].x;
+            b[1].y = tempB[1].y;
+            b[2].x = tempB[2].x;
+            b[2].y = tempB[2].y;
+            b[3].x = tempB[3].x;
+            b[3].y = tempB[3].y;
+
+        }
 
     }
 
@@ -88,7 +93,19 @@ public class tetromino {
             collisionBottom = true;
         }
     }
-    public void RotationCollisionValid() {}
+    public void RotationCollisionValid() {
+
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x < gameplayManage.left_x)) {
+            collisionLeft = true;
+        }
+
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + block.SIZE > gameplayManage.right_x)) {
+            collisionRight = true;
+        }
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + block.SIZE > gameplayManage.bottom_y)) {
+            collisionBottom = true;
+        }
+    }
 
     public void update(){
 
