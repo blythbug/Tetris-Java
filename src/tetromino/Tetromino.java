@@ -1,258 +1,252 @@
 package tetromino;
 
-
 import main.GameplayManager;
 import main.KeyHandler;
 
 import java.awt.*;
-import java.util.stream.IntStream;
+import java.util.Arrays;
+import java.util.logging.Logger;
 
-// super class for all tetrominoes  (inheritance DOC)
-public class Tetromino {
+public abstract class Tetromino {
+    private static final Logger LOGGER = Logger.getLogger(Tetromino.class.getName());
+    private static final boolean DEBUG_MODE = true;
 
-    //Block arrays
-    public Block[] b = new Block[4];
-    public Block[] tempB = new Block[4];
+    // Block arrays with final size
+    public final Block[] b = new Block[4];
+    protected final Block[] tempB = new Block[4];
 
-    //Tetromino drop
-    int autoDropCounter = 0;
-
-    // Tetromino rotation directions
-    public int direction = 1;   // directions - [1 , 2 , 3, 4]
-
-    // collisions
-    boolean collisionLeft, collisionRight, collisionBottom;
+    // Constants
+    protected static final int MAX_SLEEP_TIME = 45;
+    protected static final int DIRECTIONS = 4;
+    
+    // Tetromino state
+    protected int autoDropCounter = 0;
+    protected int direction = 1;
     public boolean active = true;
-
-    // Tetromino 'slide'
     public boolean sleep;
-    int sleepCounter = 0;
+    protected int sleepCounter = 0;
 
+    // Collision states
+    protected boolean collisionLeft, collisionRight, collisionBottom;
 
-    //create method - instantiate arrays
-    public void create(Color c) {
-        b[0] = new Block(c);
-        b[1] = new Block(c);
-        b[2] = new Block(c);
-        b[3] = new Block(c);
-        tempB[0] = new Block(c);
-        tempB[1] = new Block(c);
-        tempB[2] = new Block(c);
-        tempB[3] = new Block(c);
+    // Debug counters
+    private int rotationCount = 0;
+    private int moveCount = 0;
 
+    protected void create(Color c) {
+        for (int i = 0; i < 4; i++) {
+            b[i] = new Block(c);
+            tempB[i] = new Block(c);
+        }
+        if (DEBUG_MODE) {
+            LOGGER.info("Created new Tetromino with color: " + c);
+        }
     }
-    public void setXY(int x, int y){}
-    public void updateXY(int direction){
 
-        RotationCollisionValid();
+    // Abstract methods that must be implemented by subclasses
+    public abstract void setXY(int x, int y);
+    protected abstract void getDirection1();
+    protected abstract void getDirection2();
+    protected abstract void getDirection3();
+    protected abstract void getDirection4();
 
-        if(!collisionLeft && !collisionRight && !collisionBottom){
-            this.direction = direction;
-
-            // if collision occurs when the Tetromino is rotating, the rotation must be canceled
-            // original position is stored in tempB array instead of updating X and Y
-            // original position can then be restored
-
-            b[0].x = tempB[0].x;
-            b[0].y = tempB[0].y;
-            b[1].x = tempB[1].x;
-            b[1].y = tempB[1].y;
-            b[2].x = tempB[2].x;
-            b[2].y = tempB[2].y;
-            b[3].x = tempB[3].x;
-            b[3].y = tempB[3].y;
-
+    protected void updateXY(int newDirection) {
+        if (DEBUG_MODE) {
+            rotationCount++;
+            LOGGER.info(String.format("Rotation attempt #%d: %d -> %d", 
+                rotationCount, direction, newDirection));
         }
 
+        checkRotationCollision();
+
+        if (!hasCollisions()) {
+            direction = newDirection;
+            copyTempToMain();
+        }
     }
 
-    // to override in each individual Tetromino class
+    protected void checkRotationCollision() {
+        resetCollisionFlags();
+        checkStaticBlockCollision();
+        checkBoundaryCollisions();
+    }
 
-    public void getDirection1(){}
-    public void getDirection2(){}
-    public void getDirection3(){}
-    public void getDirection4(){}
+    protected void checkMovementCollision() {
+        resetCollisionFlags();
+        checkStaticBlockCollision();
+        checkBoundaryCollisions();
+    }
 
-    // check for collisions
-
-    public void MovementCollisionValid() {
-
-        // reset booleans
+    private void resetCollisionFlags() {
         collisionLeft = false;
         collisionRight = false;
         collisionBottom = false;
+    }
 
-        // check if colliding with static blocks
-        StaticBlockCollisionValid();
+    private boolean hasCollisions() {
+        return collisionLeft || collisionRight || collisionBottom;
+    }
 
-        // scan Block array and check x value
-        // if x value is equal to the game border's left x , Tetromino is touching the left wall
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x == GameplayManager.left_x)) {
-            collisionLeft = true;
+    private void copyTempToMain() {
+        for (int i = 0; i < 4; i++) {
+            b[i].x = tempB[i].x;
+            b[i].y = tempB[i].y;
         }
+    }
 
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + Block.SIZE == GameplayManager.right_x)) {
-            collisionRight = true;
+    protected void checkBoundaryCollisions() {
+        for (Block block : b) {
+            if (block.x == GameplayManager.left_x) collisionLeft = true;
+            if (block.x + Block.SIZE == GameplayManager.right_x) collisionRight = true;
+            if (block.y + Block.SIZE == GameplayManager.bottom_y) collisionBottom = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + Block.SIZE == GameplayManager.bottom_y)) {
+    }
+
+    protected void checkStaticBlockCollision() {
+        GameplayManager.staticBlocks.forEach(staticBlock -> {
+            for (Block block : b) {
+                checkBlockCollisions(block, staticBlock);
+            }
+        });
+    }
+
+    private void checkBlockCollisions(Block block, Block staticBlock) {
+        if (block.y + Block.SIZE == staticBlock.y && block.x == staticBlock.x) {
             collisionBottom = true;
         }
-    }
-    public void RotationCollisionValid() {
-
-        // reset booleans
-        collisionLeft = false;
-        collisionRight = false;
-        collisionBottom = false;
-
-        // check if colliding with static blocks
-        StaticBlockCollisionValid();
-
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x < GameplayManager.left_x)) {
-            collisionLeft = true;
-        }
-
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + Block.SIZE > GameplayManager.right_x)) {
+        if (block.x + Block.SIZE == staticBlock.x && block.y == staticBlock.y) {
             collisionRight = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + Block.SIZE > GameplayManager.bottom_y)) {
-            collisionBottom = true;
-        }
-    }
-    private void StaticBlockCollisionValid(){
-
-        // scan staticBlocks array
-        for(int i = 0; i < GameplayManager.staticBlocks.size(); i++){
-
-            // get each Block's x and y and check left, right and down collision
-            int block_x = GameplayManager.staticBlocks.get(i).x;
-            int block_y = GameplayManager.staticBlocks.get(i).y;
-
-
-            // bottom collision
-            for(int j = 0; j < b.length; j++){
-                if(b[j].y + Block.SIZE == block_y && b[j].x == block_x){   // if Tetromino x/ y coord + Block size = static Block x/y coord
-                    collisionBottom = true;                                // then static Block is right below a current Tetromino ; collision occurs
-                }
-            }
-            // right collision
-            for(int j = 0; j < b.length; j++){
-                if(b[j].x + Block.SIZE == block_x && b[j].y == block_y){
-                    collisionRight = true;
-                }
-            }
-            // left collision
-            for(int j = 0; j < b.length; j++){
-                if(b[j].x - Block.SIZE == block_x && b[j].y == block_y){
-                    collisionLeft = true;
-                }
-            }
+        if (block.x - Block.SIZE == staticBlock.x && block.y == staticBlock.y) {
+            collisionLeft = true;
         }
     }
 
-    public void update(){
-
-        // call 'sleep' method for Block sliding
-        if(sleep){
-            sleep();
+    public void update() {
+        if (sleep) {
+            handleSleep();
+            return;
         }
 
-        // check for collisions
-
-        MovementCollisionValid();
-
-        //  Movement
-
-        if(KeyHandler.downPressed){
-            // if Tetromino is not colliding at the bottom, move down
-            if(!collisionBottom){
-                b[0].y += Block.SIZE;
-                b[1].y += Block.SIZE;
-                b[2].y += Block.SIZE;
-                b[3].y += Block.SIZE;
-
-                // when moved down, reset autoDropCounter
-                autoDropCounter = 0;
-            }
-
-            KeyHandler.downPressed = false;
-        }
-
-        if(KeyHandler.leftPressed){
-            if(!collisionLeft){
-                b[0].x -= Block.SIZE;       // when left is pressed, subtract x from Block size
-                b[1].x -= Block.SIZE;
-                b[2].x -= Block.SIZE;
-                b[3].x -= Block.SIZE;
-            }
-            KeyHandler.leftPressed = false;
-
-        }
-
-        if(KeyHandler.rightPressed){
-            if(!collisionRight){
-                b[0].x += Block.SIZE;        // when right is pressed, add Block size to x
-                b[1].x += Block.SIZE;
-                b[2].x += Block.SIZE;
-                b[3].x += Block.SIZE;
-            }
-            KeyHandler.rightPressed = false;
-
-        }
-
-        if(KeyHandler.upPressed){        // Tetromino rotation
-
-            switch(direction){
-                case 1: getDirection2();break;
-                case 2: getDirection3();break;
-                case 3: getDirection4();break;
-                case 4: getDirection1();break;
-            }
-            KeyHandler.upPressed = false;
-        }
-
-        if(collisionBottom){
-            sleep = true;
-        }
-        else{
-
-            autoDropCounter++;     // counter increases in every frame
-            if (autoDropCounter == GameplayManager.dropInterval){
-
-                // Tetromino goes down
-                b[0].y += Block.SIZE;
-                b[1].y += Block.SIZE;
-                b[2].y += Block.SIZE;
-                b[3].y += Block.SIZE;
-                autoDropCounter = 0; // reset drop counter
-            }
-        }
-
+        checkMovementCollision();
+        handleMovement();
+        handleAutoDrop();
     }
 
-    // allow Tetromino a brief time before becoming static; allows slides
-    private void sleep(){
+    private void handleMovement() {
+        if (KeyHandler.downPressed && !collisionBottom) {
+            moveDown();
+        }
+        if (KeyHandler.leftPressed && !collisionLeft) {
+            moveLeft();
+        }
+        if (KeyHandler.rightPressed && !collisionRight) {
+            moveRight();
+        }
+        if (KeyHandler.upPressed) {
+            rotate();
+        }
+    }
+
+    private void handleSleep() {
         sleepCounter++;
-
-        // wait 45 frames until deactivate
-        if(sleepCounter == 45){
-
+        if (sleepCounter >= MAX_SLEEP_TIME) {
             sleepCounter = 0;
-            MovementCollisionValid();  // check if there is bottom collision
-
-            // if the bottom is still colliding after 45 frames, make Tetromino static
-            if(collisionBottom){
+            checkMovementCollision();
+            if (collisionBottom) {
                 active = false;
+                if (DEBUG_MODE) {
+                    LOGGER.info("Tetromino deactivated after sleep");
+                }
             }
         }
     }
-    public void draw(Graphics2D g2){
 
+    protected void moveDown() {
+        moveCount++;
+        Arrays.stream(b).forEach(block -> block.y += Block.SIZE);
+        autoDropCounter = 0;
+        KeyHandler.downPressed = false;
+        if (DEBUG_MODE) {
+            LOGGER.info("Move down #" + moveCount);
+        }
+    }
+
+    protected void moveLeft() {
+        moveCount++;
+        Arrays.stream(b).forEach(block -> block.x -= Block.SIZE);
+        KeyHandler.leftPressed = false;
+        if (DEBUG_MODE) {
+            LOGGER.info("Move left #" + moveCount);
+        }
+    }
+
+    protected void moveRight() {
+        moveCount++;
+        Arrays.stream(b).forEach(block -> block.x += Block.SIZE);
+        KeyHandler.rightPressed = false;
+        if (DEBUG_MODE) {
+            LOGGER.info("Move right #" + moveCount);
+        }
+    }
+
+    protected void rotate() {
+        switch(direction) {
+            case 1 -> getDirection2();
+            case 2 -> getDirection3();
+            case 3 -> getDirection4();
+            case 4 -> getDirection1();
+        }
+        KeyHandler.upPressed = false;
+    }
+
+    private void handleAutoDrop() {
+        if (collisionBottom) {
+            sleep = true;
+            return;
+        }
+
+        autoDropCounter++;
+        if (autoDropCounter >= GameplayManager.dropInterval) {
+            moveDown();
+        }
+    }
+
+    public void draw(Graphics2D g2) {
         g2.setColor(b[0].c);
-        g2.fillRect(b[0].x, b[0].y, Block.SIZE, Block.SIZE);
-        g2.fillRect(b[1].x, b[1].y, Block.SIZE, Block.SIZE);
-        g2.fillRect(b[2].x, b[2].y, Block.SIZE, Block.SIZE);
-        g2.fillRect(b[3].x, b[3].y, Block.SIZE, Block.SIZE);
+        Arrays.stream(b).forEach(block -> 
+            g2.fillRect(block.x, block.y, Block.SIZE, Block.SIZE));
+        
+        if (DEBUG_MODE) {
+            drawDebugInfo(g2);
+        }
+    }
 
+    private void drawDebugInfo(Graphics2D g2) {
+        g2.setColor(Color.WHITE);
+        g2.drawString("Dir: " + direction, b[0].x, b[0].y - 5);
+        g2.drawString("Active: " + active, b[0].x, b[0].y - 20);
+    }
+
+    // Debug methods
+    public String getDebugInfo() {
+        return String.format("""
+            Tetromino Debug Info:
+            Position: (%d, %d)
+            Direction: %d
+            Active: %b
+            Sleep: %b
+            Moves: %d
+            Rotations: %d
+            Collisions: L:%b R:%b B:%b
+            """,
+            b[0].x, b[0].y, direction, active, sleep,
+            moveCount, rotationCount,
+            collisionLeft, collisionRight, collisionBottom);
+    }
+
+    public void resetDebugCounters() {
+        moveCount = 0;
+        rotationCount = 0;
     }
 }
