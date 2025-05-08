@@ -1,8 +1,8 @@
 package tetromino;
 
 
+import main.GameplayManager;
 import main.KeyHandler;
-import main.gameplayManage;
 
 import java.awt.*;
 import java.util.stream.IntStream;
@@ -87,14 +87,14 @@ public class tetromino {
 
         // scan block array and check x value
         // if x value is equal to the game border's left x , tetromino is touching the left wall
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x == gameplayManage.left_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x == GameplayManager.left_x)) {
             collisionLeft = true;
         }
 
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + block.SIZE == gameplayManage.right_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + block.SIZE == GameplayManager.right_x)) {
             collisionRight = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + block.SIZE == gameplayManage.bottom_y)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + block.SIZE == GameplayManager.bottom_y)) {
             collisionBottom = true;
         }
     }
@@ -108,25 +108,25 @@ public class tetromino {
         // check if colliding with static blocks
         StaticBlockCollisionValid();
 
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x < gameplayManage.left_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x < GameplayManager.left_x)) {
             collisionLeft = true;
         }
 
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + block.SIZE > gameplayManage.right_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + block.SIZE > GameplayManager.right_x)) {
             collisionRight = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + block.SIZE > gameplayManage.bottom_y)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + block.SIZE > GameplayManager.bottom_y)) {
             collisionBottom = true;
         }
     }
     private void StaticBlockCollisionValid(){
 
         // scan staticBlocks array
-        for(int i = 0; i < gameplayManage.staticBlocks.size(); i++){
+        for(int i = 0; i < GameplayManager.staticBlocks.size(); i++){
 
             // get each block's x and y and check left, right and down collision
-            int block_x = gameplayManage.staticBlocks.get(i).x;
-            int block_y = gameplayManage.staticBlocks.get(i).y;
+            int block_x = GameplayManager.staticBlocks.get(i).x;
+            int block_y = GameplayManager.staticBlocks.get(i).y;
 
 
             // bottom collision
@@ -217,7 +217,7 @@ public class tetromino {
         else{
 
             autoDropCounter++;     // counter increases in every frame
-            if (autoDropCounter == gameplayManage.dropInterval){
+            if (autoDropCounter == GameplayManager.dropInterval){
 
                 // tetromino goes down
                 b[0].y += block.SIZE;

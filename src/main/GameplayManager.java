@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class gameplayManage {
+public class GameplayManager {
 
     // Play Area
     final int WIDTH = 360;
@@ -42,7 +42,7 @@ public class gameplayManage {
     int lines;
     int score;
 
-    public gameplayManage() {
+    public GameplayManager() {
 
         // Game Area Frame
         left_x = (GameArea.WIDTH/2) - (WIDTH/2); // 1280/2 - 360/2 = 460

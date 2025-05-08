@@ -14,7 +14,7 @@ public class GameArea extends JPanel implements Runnable{
     public static final int WIDTH = 1000;         // 1280
 
     Thread tetrisThread;
-    gameplayManage gpm;             // instantiate gameplayManage class
+    GameplayManager gpm;             // instantiate GameplayManager class
     private Image backgroundImage; // Declare the backgroundImage field
 
 
@@ -29,7 +29,7 @@ public class GameArea extends JPanel implements Runnable{
         this.addKeyListener(new KeyHandler());   // you can get a key input with KeyHandler
         this.setFocusable(true);                 // when you press a key while the window is focused
 
-        gpm = new gameplayManage();
+        gpm = new GameplayManager();
 
 
         // button to change background image
@@ -84,7 +84,7 @@ public class GameArea extends JPanel implements Runnable{
 
         // only update onscreen game information when the game is not paused
         if(!KeyHandler.pausePressed){
-            gpm.update();   // call the update method in the gameplayManage class
+            gpm.update();   // call the update method in the GameplayManager class
         }
 
 
@@ -101,7 +101,7 @@ public class GameArea extends JPanel implements Runnable{
             g2.drawImage(backgroundImage, 0, 0, WIDTH, HEIGHT, this); // Use backgroundImage
         }
 
-        gpm.draw(g2); // call the draw method in the gameplayManage class and pass in Graphics2D as parameter
+        gpm.draw(g2); // call the draw method in the GameplayManager class and pass in Graphics2D as parameter
     }
 
     // load the background image from a file
@@ -125,5 +125,6 @@ public class GameArea extends JPanel implements Runnable{
             File selectedFile = fileChooser.getSelectedFile();
             setBackgroundImage(selectedFile.getAbsolutePath()); // Set the selected image as background
         }
+
     }
 }
