@@ -38,7 +38,7 @@ public class gameplayManage {
         MINO_INIT_Y = top_y + block.SIZE;
 
         // initialising starting tetromino
-        currentMino = new L1_mino();
+        currentMino = pickMino();         // call pickmino to generate a random tetromino
         currentMino.setXY(MINO_INIT_X, MINO_INIT_Y);
     }
     private tetromino pickMino(){
@@ -46,6 +46,16 @@ public class gameplayManage {
         // pick a random tetromino block
         tetromino mino = null;
         int i = new Random().nextInt(7);
+
+        switch(i) {
+            case 0: mino = new L1_mino();break;
+            case 1: mino = new L2_mino();break;
+            case 2: mino = new bar_mino();break;
+            case 3: mino = new snake1_mino();break;
+            case 4: mino = new snake2_mino();break;
+            case 5: mino = new T_mino();break;
+            case 6: mino = new square_mino();break;
+        }
     }
 
 
