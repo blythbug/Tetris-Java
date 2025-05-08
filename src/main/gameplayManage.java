@@ -196,7 +196,7 @@ public class gameplayManage {
         // "press P to pause"
         g2.setColor(Color.yellow);
         g2.setFont(new Font("Arial", Font.BOLD, 15));
-        x = right_x + 115;
+        x = right_x + 140;
         y = top_y + 220;
         g2.drawString("Press P to pause!", x, y);
 

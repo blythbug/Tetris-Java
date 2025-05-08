@@ -11,7 +11,7 @@ public class GameArea extends JPanel implements Runnable{
     final int FPS = 60;      // frames per second
     // Screen Size
     public static final int HEIGHT = 720;
-    public static final int WIDTH = 1280;
+    public static final int WIDTH = 1000;         // 1280
 
     Thread tetrisThread;
     gameplayManage gpm;             // instantiate gameplayManage class
@@ -34,7 +34,7 @@ public class GameArea extends JPanel implements Runnable{
 
         // button to change background image
         JButton changeBackgroundButton = new JButton("Change Background");
-        changeBackgroundButton.setBounds(WIDTH - 330,HEIGHT - 160, 150, 30); // Position and size of the button
+        changeBackgroundButton.setBounds(WIDTH - 200,HEIGHT - 160, 150, 30); // Position and size of the button
 
         // customise button
         changeBackgroundButton.setBackground(Color.black); // Set the button's background color to black
