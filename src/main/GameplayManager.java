@@ -19,20 +19,20 @@ public class GameplayManager {
     public static int bottom_y;
 
     // Tetromino
-    tetromino currentMino;
+    Tetromino currentMino;
     final int MINO_INIT_X;
     final int MINO_INIT_Y;
 
     // Next Tetromino
 
-    tetromino nextMino;
+    Tetromino nextMino;
     final int NEXTMINO_X;
     final int NEXTMINO_Y;
-    public static ArrayList<block> staticBlocks = new ArrayList<>();
+    public static ArrayList<Block> staticBlocks = new ArrayList<>();
 
 
-    // tetromino drop
-    public static int dropInterval = 60;   // tetromino drops every 60 frames
+    // Tetromino drop
+    public static int dropInterval = 60;   // Tetromino drops every 60 frames
 
     // game over
     public boolean gameOver;
@@ -50,36 +50,36 @@ public class GameplayManager {
         top_y = 50;
         bottom_y = top_y + HEIGHT;
 
-        // starting tetromino position (centre of play area)
-        MINO_INIT_X = left_x + (WIDTH/2) - block.SIZE;
-        MINO_INIT_Y = top_y + block.SIZE;
+        // starting Tetromino position (centre of play area)
+        MINO_INIT_X = left_x + (WIDTH/2) - Block.SIZE;
+        MINO_INIT_Y = top_y + Block.SIZE;
 
-        // next tetromino
+        // next Tetromino
         NEXTMINO_X = right_x + 175;
         NEXTMINO_Y = top_y + 70;
 
-        // initialising starting tetromino
-        currentMino = pickMino();         // call pickmino to generate a random tetromino
+        // initialising starting Tetromino
+        currentMino = pickMino();         // call pickmino to generate a random Tetromino
         currentMino.setXY(MINO_INIT_X, MINO_INIT_Y);
 
-        //  pick next random tetromino
+        //  pick next random Tetromino
         nextMino = pickMino();
         nextMino.setXY(NEXTMINO_X, NEXTMINO_Y);
     }
-    private tetromino pickMino(){
+    private Tetromino pickMino(){
 
-        // pick a random tetromino block
-        tetromino mino = null;
+        // pick a random Tetromino Block
+        Tetromino mino = null;
         int i = new Random().nextInt(7);
 
         mino = switch (i) {
-            case 0 -> new L1_mino();
-            case 1 -> new L2_mino();
-            case 2 -> new bar_mino();
-            case 3 -> new snake1_mino();
-            case 4 -> new snake2_mino();
-            case 5 -> new T_mino();
-            case 6 -> new square_mino();
+            case 0 -> new L1Mino();
+            case 1 -> new L2Mino();
+            case 2 -> new BarMino();
+            case 3 -> new Snake1Mino();
+            case 4 -> new Snake2Mino();
+            case 5 -> new T_Mino();
+            case 6 -> new SquareMino();
             default -> throw new IllegalStateException("Unexpected value: " + i);
         };
         return mino;
@@ -89,10 +89,10 @@ public class GameplayManager {
 
     public void update(){
 
-        // check if current tetromino is active
+        // check if current Tetromino is active
         if(!currentMino.active){
 
-            // if tetromino is not active, put into staticBlocks
+            // if Tetromino is not active, put into staticBlocks
 
             staticBlocks.add(currentMino.b[0]);
             staticBlocks.add(currentMino.b[1]);
@@ -101,8 +101,8 @@ public class GameplayManager {
 
             // check if game over
             if(currentMino.b[0].x == MINO_INIT_X && currentMino.b[0].y == MINO_INIT_Y){
-                // current tetromino immediately collided with block and had no possible movement
-                // when x y coord are the same with the next tetromino , game over
+                // current Tetromino immediately collided with Block and had no possible movement
+                // when x y coord are the same with the next Tetromino , game over
                 gameOver = true;
             }
 
@@ -114,7 +114,7 @@ public class GameplayManager {
             nextMino = pickMino();
             nextMino.setXY(NEXTMINO_X,NEXTMINO_Y);
 
-            // when a tetromino becomes inactive, check if lines can be cleared
+            // when a Tetromino becomes inactive, check if lines can be cleared
             clearValid();
         }
         else{
@@ -132,18 +132,18 @@ public class GameplayManager {
 
         while( x < right_x && y < bottom_y){
 
-            // scan game area by block size
+            // scan game area by Block size
             for(int i = 0; i < staticBlocks.size(); i++)
                 if (staticBlocks.get(i).x == x && staticBlocks.get(i).y == y) {
-                    // if there is a static block, increase block counter
+                    // if there is a static Block, increase Block counter
                     blockCounter++;
                 }
 
-            x += block.SIZE;
+            x += Block.SIZE;
 
             if(x == right_x){
 
-                if(blockCounter == 12){   // check if block counter hits 12 (max)
+                if(blockCounter == 12){   // check if Block counter hits 12 (max)
                     for(int i = staticBlocks.size()-1; i > -1; i--){
                         // remove all blocks in current y line
                         if(staticBlocks.get(i).y == y){
@@ -172,15 +172,15 @@ public class GameplayManager {
 
                     //shift all lines down by 1
                     for(int i = 0; i < staticBlocks.size(); i++){
-                        // if block is above the current y, move it down by block size
+                        // if Block is above the current y, move it down by Block size
                         if(staticBlocks.get(i).y < y) {
-                            staticBlocks.get(i).y += block.SIZE;
+                            staticBlocks.get(i).y += Block.SIZE;
                         }
                     }
                 }
                 blockCounter = 0;
                 x = left_x;
-                y += block.SIZE;
+                y += Block.SIZE;
             }
 
         }
@@ -198,7 +198,7 @@ public class GameplayManager {
         // Game Area
         g2.setColor(Color.MAGENTA);
         g2.setStroke(new BasicStroke(4f)); //4 pixels width
-        g2.drawRect(left_x-4, top_y-4, WIDTH+8, HEIGHT+8); // tetromino will collide with the inner
+        g2.drawRect(left_x-4, top_y-4, WIDTH+8, HEIGHT+8); // Tetromino will collide with the inner
                                                                               // boundary instead of the outer
         // NEXT BLOCK frame
         int x = right_x + 100;
@@ -217,7 +217,7 @@ public class GameplayManager {
         g2.drawString("LINES CLEAR: " + lines, x, y); y+= 70;
         g2.drawString("SCORE: " + score, x, y); y+= 70;
 
-        // draw current tetromino
+        // draw current Tetromino
         if(currentMino != null) {         // check if null to avoid NullPointerException errors
             currentMino.draw(g2);
 
@@ -226,7 +226,7 @@ public class GameplayManager {
             //g2.fillRect(MINO_INIT_X, MINO_INIT_Y, 10, 10);;
         }
 
-        // draw next tetromino
+        // draw next Tetromino
         nextMino.draw(g2);
 
         // draw static blocks  - scan the static blocks and draw them one by one

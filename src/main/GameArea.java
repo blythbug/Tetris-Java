@@ -3,6 +3,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import javax.imageio.ImageIO;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -31,19 +32,34 @@ public class GameArea extends JPanel implements Runnable{
 
         gpm = new GameplayManager();
 
+        setFocusable(true);
+        requestFocusInWindow();
+
 
         // button to change background image
         JButton changeBackgroundButton = new JButton("Change Background");
         changeBackgroundButton.setBounds(WIDTH - 190,HEIGHT - 160, 150, 30); // Position and size of the button
 
         // customise button
-        changeBackgroundButton.setBackground(Color.black); // Set the button's background color to black
         changeBackgroundButton.setForeground(Color.magenta); // Set the text color to magenta
         changeBackgroundButton.setBorder(BorderFactory.createLineBorder(Color.magenta, 2)); // Magenta border with thickness of 2
         changeBackgroundButton.setFocusPainted(false); // Remove the focus ring when clicked
 
         changeBackgroundButton.addActionListener(e -> chooseBackgroundImage()); // Add listener to button
         this.add(changeBackgroundButton);
+
+        // Add this to your GameArea constructor
+        addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                System.out.println("Game area gained focus");
+            }
+            
+            @Override
+            public void focusLost(FocusEvent e) {
+                System.out.println("Game area lost focus");
+            }
+        });
     }
     public void initGame(){
         tetrisThread = new Thread(this);
@@ -89,6 +105,7 @@ public class GameArea extends JPanel implements Runnable{
 
 
     }
+    
 
     // Paint -> objects, UI
     @Override
@@ -103,6 +120,8 @@ public class GameArea extends JPanel implements Runnable{
 
         gpm.draw(g2); // call the draw method in the GameplayManager class and pass in Graphics2D as parameter
     }
+    
+    
 
     // load the background image from a file
     public void setBackgroundImage(String filePath) {
@@ -126,5 +145,6 @@ public class GameArea extends JPanel implements Runnable{
             setBackgroundImage(selectedFile.getAbsolutePath()); // Set the selected image as background
         }
 
+        this.requestFocusInWindow();
     }
 }

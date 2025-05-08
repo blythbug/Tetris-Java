@@ -2,9 +2,9 @@ package tetromino;
 
 import java.awt.*;
 
-public class snake1_mino extends tetromino{
+public class Snake1Mino extends Tetromino {
 
-    public snake1_mino(){
+    public Snake1Mino(){
         create(Color.green);     //call create method from super class and pass a colour
     }
     public void setXY(int x, int y){
@@ -18,13 +18,13 @@ public class snake1_mino extends tetromino{
         b[0].y = y;
 
         b[1].x = b[0].x;
-        b[1].y = b[0].y - block.SIZE;
+        b[1].y = b[0].y - Block.SIZE;
 
-        b[2].x = b[0].x - block.SIZE;
+        b[2].x = b[0].x - Block.SIZE;
         b[2].y = b[0].y;
 
-        b[3].x = b[0].x - block.SIZE;
-        b[3].y = b[0].y + block.SIZE;
+        b[3].x = b[0].x - Block.SIZE;
+        b[3].y = b[0].y + Block.SIZE;
 
     }
 
@@ -38,13 +38,13 @@ public class snake1_mino extends tetromino{
         tempB[0].y = b[0].y;
 
         tempB[1].x = b[0].x;
-        tempB[1].y = b[0].y - block.SIZE;
+        tempB[1].y = b[0].y - Block.SIZE;
 
-        tempB[2].x = b[0].x - block.SIZE;
+        tempB[2].x = b[0].x - Block.SIZE;
         tempB[2].y = b[0].y;
 
-        tempB[3].x = b[0].x - block.SIZE;
-        tempB[3].y = b[0].y + block.SIZE;
+        tempB[3].x = b[0].x - Block.SIZE;
+        tempB[3].y = b[0].y + Block.SIZE;
 
         updateXY(1);
     }
@@ -56,19 +56,19 @@ public class snake1_mino extends tetromino{
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
 
-        tempB[1].x = b[0].x + block.SIZE;
+        tempB[1].x = b[0].x + Block.SIZE;
         tempB[1].y = b[0].y;
 
         tempB[2].x = b[0].x;
-        tempB[2].y = b[0].y - block.SIZE;
+        tempB[2].y = b[0].y - Block.SIZE;
 
-        tempB[3].x = b[0].x - block.SIZE;
-        tempB[3].y = b[0].y - block.SIZE;
+        tempB[3].x = b[0].x - Block.SIZE;
+        tempB[3].y = b[0].y - Block.SIZE;
 
         updateXY(2);
     }
 
-    // The snake tetromino only has 2 possible rotations, so direction 3 and 4 just call direction 1 and 2
+    // The snake Tetromino only has 2 possible rotations, so direction 3 and 4 just call direction 1 and 2
     // respectively
 
     public void getDirection3(){

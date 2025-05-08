@@ -8,37 +8,37 @@ import java.awt.*;
 import java.util.stream.IntStream;
 
 // super class for all tetrominoes  (inheritance DOC)
-public class tetromino {
+public class Tetromino {
 
-    //block arrays
-    public block[] b = new block[4];
-    public block[] tempB = new block[4];
+    //Block arrays
+    public Block[] b = new Block[4];
+    public Block[] tempB = new Block[4];
 
-    //tetromino drop
+    //Tetromino drop
     int autoDropCounter = 0;
 
-    // tetromino rotation directions
+    // Tetromino rotation directions
     public int direction = 1;   // directions - [1 , 2 , 3, 4]
 
     // collisions
     boolean collisionLeft, collisionRight, collisionBottom;
     public boolean active = true;
 
-    // tetromino 'slide'
+    // Tetromino 'slide'
     public boolean sleep;
     int sleepCounter = 0;
 
 
     //create method - instantiate arrays
     public void create(Color c) {
-        b[0] = new block(c);
-        b[1] = new block(c);
-        b[2] = new block(c);
-        b[3] = new block(c);
-        tempB[0] = new block(c);
-        tempB[1] = new block(c);
-        tempB[2] = new block(c);
-        tempB[3] = new block(c);
+        b[0] = new Block(c);
+        b[1] = new Block(c);
+        b[2] = new Block(c);
+        b[3] = new Block(c);
+        tempB[0] = new Block(c);
+        tempB[1] = new Block(c);
+        tempB[2] = new Block(c);
+        tempB[3] = new Block(c);
 
     }
     public void setXY(int x, int y){}
@@ -49,7 +49,7 @@ public class tetromino {
         if(!collisionLeft && !collisionRight && !collisionBottom){
             this.direction = direction;
 
-            // if collision occurs when the tetromino is rotating, the rotation must be canceled
+            // if collision occurs when the Tetromino is rotating, the rotation must be canceled
             // original position is stored in tempB array instead of updating X and Y
             // original position can then be restored
 
@@ -66,7 +66,7 @@ public class tetromino {
 
     }
 
-    // to override in each individual tetromino class
+    // to override in each individual Tetromino class
 
     public void getDirection1(){}
     public void getDirection2(){}
@@ -85,16 +85,16 @@ public class tetromino {
         // check if colliding with static blocks
         StaticBlockCollisionValid();
 
-        // scan block array and check x value
-        // if x value is equal to the game border's left x , tetromino is touching the left wall
+        // scan Block array and check x value
+        // if x value is equal to the game border's left x , Tetromino is touching the left wall
         if (IntStream.range(0, b.length).anyMatch(i -> b[i].x == GameplayManager.left_x)) {
             collisionLeft = true;
         }
 
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + block.SIZE == GameplayManager.right_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].x + Block.SIZE == GameplayManager.right_x)) {
             collisionRight = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + block.SIZE == GameplayManager.bottom_y)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> b[i].y + Block.SIZE == GameplayManager.bottom_y)) {
             collisionBottom = true;
         }
     }
@@ -112,10 +112,10 @@ public class tetromino {
             collisionLeft = true;
         }
 
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + block.SIZE > GameplayManager.right_x)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].x + Block.SIZE > GameplayManager.right_x)) {
             collisionRight = true;
         }
-        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + block.SIZE > GameplayManager.bottom_y)) {
+        if (IntStream.range(0, b.length).anyMatch(i -> tempB[i].y + Block.SIZE > GameplayManager.bottom_y)) {
             collisionBottom = true;
         }
     }
@@ -124,26 +124,26 @@ public class tetromino {
         // scan staticBlocks array
         for(int i = 0; i < GameplayManager.staticBlocks.size(); i++){
 
-            // get each block's x and y and check left, right and down collision
+            // get each Block's x and y and check left, right and down collision
             int block_x = GameplayManager.staticBlocks.get(i).x;
             int block_y = GameplayManager.staticBlocks.get(i).y;
 
 
             // bottom collision
             for(int j = 0; j < b.length; j++){
-                if(b[j].y + block.SIZE == block_y && b[j].x == block_x){   // if tetromino x/ y coord + block size = static block x/y coord
-                    collisionBottom = true;                                // then static block is right below a current tetromino ; collision occurs
+                if(b[j].y + Block.SIZE == block_y && b[j].x == block_x){   // if Tetromino x/ y coord + Block size = static Block x/y coord
+                    collisionBottom = true;                                // then static Block is right below a current Tetromino ; collision occurs
                 }
             }
             // right collision
             for(int j = 0; j < b.length; j++){
-                if(b[j].x + block.SIZE == block_x && b[j].y == block_y){
+                if(b[j].x + Block.SIZE == block_x && b[j].y == block_y){
                     collisionRight = true;
                 }
             }
             // left collision
             for(int j = 0; j < b.length; j++){
-                if(b[j].x - block.SIZE == block_x && b[j].y == block_y){
+                if(b[j].x - Block.SIZE == block_x && b[j].y == block_y){
                     collisionLeft = true;
                 }
             }
@@ -152,7 +152,7 @@ public class tetromino {
 
     public void update(){
 
-        // call 'sleep' method for block sliding
+        // call 'sleep' method for Block sliding
         if(sleep){
             sleep();
         }
@@ -164,12 +164,12 @@ public class tetromino {
         //  Movement
 
         if(KeyHandler.downPressed){
-            // if tetromino is not colliding at the bottom, move down
+            // if Tetromino is not colliding at the bottom, move down
             if(!collisionBottom){
-                b[0].y += block.SIZE;
-                b[1].y += block.SIZE;
-                b[2].y += block.SIZE;
-                b[3].y += block.SIZE;
+                b[0].y += Block.SIZE;
+                b[1].y += Block.SIZE;
+                b[2].y += Block.SIZE;
+                b[3].y += Block.SIZE;
 
                 // when moved down, reset autoDropCounter
                 autoDropCounter = 0;
@@ -180,10 +180,10 @@ public class tetromino {
 
         if(KeyHandler.leftPressed){
             if(!collisionLeft){
-                b[0].x -= block.SIZE;       // when left is pressed, subtract x from block size
-                b[1].x -= block.SIZE;
-                b[2].x -= block.SIZE;
-                b[3].x -= block.SIZE;
+                b[0].x -= Block.SIZE;       // when left is pressed, subtract x from Block size
+                b[1].x -= Block.SIZE;
+                b[2].x -= Block.SIZE;
+                b[3].x -= Block.SIZE;
             }
             KeyHandler.leftPressed = false;
 
@@ -191,16 +191,16 @@ public class tetromino {
 
         if(KeyHandler.rightPressed){
             if(!collisionRight){
-                b[0].x += block.SIZE;        // when right is pressed, add block size to x
-                b[1].x += block.SIZE;
-                b[2].x += block.SIZE;
-                b[3].x += block.SIZE;
+                b[0].x += Block.SIZE;        // when right is pressed, add Block size to x
+                b[1].x += Block.SIZE;
+                b[2].x += Block.SIZE;
+                b[3].x += Block.SIZE;
             }
             KeyHandler.rightPressed = false;
 
         }
 
-        if(KeyHandler.upPressed){        // tetromino rotation
+        if(KeyHandler.upPressed){        // Tetromino rotation
 
             switch(direction){
                 case 1: getDirection2();break;
@@ -219,18 +219,18 @@ public class tetromino {
             autoDropCounter++;     // counter increases in every frame
             if (autoDropCounter == GameplayManager.dropInterval){
 
-                // tetromino goes down
-                b[0].y += block.SIZE;
-                b[1].y += block.SIZE;
-                b[2].y += block.SIZE;
-                b[3].y += block.SIZE;
+                // Tetromino goes down
+                b[0].y += Block.SIZE;
+                b[1].y += Block.SIZE;
+                b[2].y += Block.SIZE;
+                b[3].y += Block.SIZE;
                 autoDropCounter = 0; // reset drop counter
             }
         }
 
     }
 
-    // allow tetromino a brief time before becoming static; allows slides
+    // allow Tetromino a brief time before becoming static; allows slides
     private void sleep(){
         sleepCounter++;
 
@@ -240,7 +240,7 @@ public class tetromino {
             sleepCounter = 0;
             MovementCollisionValid();  // check if there is bottom collision
 
-            // if the bottom is still colliding after 45 frames, make tetromino static
+            // if the bottom is still colliding after 45 frames, make Tetromino static
             if(collisionBottom){
                 active = false;
             }
@@ -249,10 +249,10 @@ public class tetromino {
     public void draw(Graphics2D g2){
 
         g2.setColor(b[0].c);
-        g2.fillRect(b[0].x, b[0].y, block.SIZE, block.SIZE);
-        g2.fillRect(b[1].x, b[1].y, block.SIZE, block.SIZE);
-        g2.fillRect(b[2].x, b[2].y, block.SIZE, block.SIZE);
-        g2.fillRect(b[3].x, b[3].y, block.SIZE, block.SIZE);
+        g2.fillRect(b[0].x, b[0].y, Block.SIZE, Block.SIZE);
+        g2.fillRect(b[1].x, b[1].y, Block.SIZE, Block.SIZE);
+        g2.fillRect(b[2].x, b[2].y, Block.SIZE, Block.SIZE);
+        g2.fillRect(b[3].x, b[3].y, Block.SIZE, Block.SIZE);
 
     }
 }

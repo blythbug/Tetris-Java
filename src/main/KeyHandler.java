@@ -1,16 +1,11 @@
 package main;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.KeyAdapter;
 
-public class KeyHandler implements KeyListener {
+public class KeyHandler extends KeyAdapter {
 
     public static boolean upPressed, downPressed, leftPressed, rightPressed, pausePressed;
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -39,8 +34,4 @@ public class KeyHandler implements KeyListener {
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
 }
