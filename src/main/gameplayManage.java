@@ -34,6 +34,9 @@ public class gameplayManage {
     // tetromino drop
     public static int dropInterval = 60;   // tetromino drops every 60 frames
 
+    // game over
+    public boolean gameOver;
+
     public gameplayManage() {
 
         // Game Area Frame
@@ -91,6 +94,13 @@ public class gameplayManage {
             staticBlocks.add(currentMino.b[2]);
             staticBlocks.add(currentMino.b[3]);
 
+            // check if game over
+            if(currentMino.b[0].x == MINO_INIT_X && currentMino.b[0].y == MINO_INIT_Y){
+                // current tetromino immediately collided with block and had no possible movement
+                // when x y coord are the same with the next tetromino , game over
+                gameOver = true;
+            }
+
             currentMino.sleep = false;
 
             // replace currentMino with nextMino
@@ -107,6 +117,7 @@ public class gameplayManage {
         }
     }
 
+    // check if lines are able to be cleared
     private void clearValid(){
 
         int x = left_x;
@@ -192,6 +203,13 @@ public class gameplayManage {
         // Pause button [P]
         g2.setColor(Color.yellow);
         g2.setFont(new Font("Arial", Font.BOLD, 50));
+
+        // Game over Text
+        if(gameOver){
+            x = left_x + 30;
+            y = top_y + 320;
+            g2.drawString("GAME OVER", x, y);
+        }
         if(KeyHandler.pausePressed){
             x = left_x + 80;
             y = top_y + 320;
