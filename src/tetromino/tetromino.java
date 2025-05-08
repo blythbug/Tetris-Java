@@ -10,14 +10,17 @@ import java.awt.*;
 public class tetromino {
 
     //block arrays
-    public block b[] = new block[4];
-    public block tempB[] = new block[4];
+    public block[] b = new block[4];
+    public block[] tempB = new block[4];
 
     //tetromino drop
     int autoDropCounter = 0;
 
     // tetromino rotation directions
     public int direction = 1;   // directions - [1 , 2 , 3, 4]
+
+    // collisions
+    boolean collisionLeft, collisionRight, collisionBottom;
 
 
     //create method - instantiate arrays
@@ -50,7 +53,6 @@ public class tetromino {
         b[3].x = tempB[3].x;
         b[3].y = tempB[3].y;
 
-
     }
 
     // to override in each individual tetromino class
@@ -60,41 +62,81 @@ public class tetromino {
     public void getDirection3(){}
     public void getDirection4(){}
 
+    // check for collisions
+
+    public void MovementCollisionValid() {
+
+        // reset booleans
+        collisionLeft = false;
+        collisionRight = false;
+        collisionBottom = false;
+
+        // check game area boundary collisions
+        // left border
+
+        for(int i =0; i < b.length; i++) {      // scan block array and check x value
+            if (b[i].x == gameplayManage.left_x) {   // if x value is equal to the game border's left x , tetromino is touching the left wall
+                collisionLeft = true;
+                break;
+            }
+        }
+
+        for(int i = 0; i < b.length; i++){
+            if (b[i].y + block.SIZE == gameplayManage.right_x) {
+                collisionRight = true;
+                break;
+            }
+        }
+        for(int i = 0; i < b.length; i++){
+            if (b[i].y + block.SIZE == gameplayManage.bottom_y) {
+                collisionBottom = true;
+                break;
+            }
+        }
+    }
+    public void RotationCollisionValid() {}
+
     public void update(){
+
+        // check for collisions
+
+        MovementCollisionValid();
 
         //  Movement
 
         if(KeyHandler.downPressed){
+            // if tetromino is not colliding at the bottom, move down
+            if(!collisionBottom){
+                b[0].y += block.SIZE;
+                b[1].y += block.SIZE;
+                b[2].y += block.SIZE;
+                b[3].y += block.SIZE;
 
-            b[0].y += block.SIZE;
-            b[1].y += block.SIZE;
-            b[2].y += block.SIZE;
-            b[3].y += block.SIZE;
-
-            // when moved down, reset autoDropCounter
-            autoDropCounter= 0;
+                // when moved down, reset autoDropCounter
+                autoDropCounter = 0;
+            }
 
             KeyHandler.downPressed = false;
         }
 
         if(KeyHandler.leftPressed){
-
-            b[0].x -= block.SIZE;       // when left is pressed, subtract x from block size
-            b[1].x -= block.SIZE;
-            b[2].x -= block.SIZE;
-            b[3].x -= block.SIZE;
-
+            if(!collisionLeft){
+                b[0].x -= block.SIZE;       // when left is pressed, subtract x from block size
+                b[1].x -= block.SIZE;
+                b[2].x -= block.SIZE;
+                b[3].x -= block.SIZE;
+            }
             KeyHandler.leftPressed = false;
 
         }
 
         if(KeyHandler.rightPressed){
-
-            b[0].x += block.SIZE;        // when right is pressed, add block size to x
-            b[1].x += block.SIZE;
-            b[2].x += block.SIZE;
-            b[3].x += block.SIZE;
-
+            if(!collisionRight){
+                b[0].x += block.SIZE;        // when right is pressed, add block size to x
+                b[1].x += block.SIZE;
+                b[2].x += block.SIZE;
+                b[3].x += block.SIZE;
+            }
             KeyHandler.rightPressed = false;
 
         }
