@@ -5,7 +5,7 @@ import java.awt.*;
 public class snake2_mino extends tetromino{
 
     public snake2_mino(){
-        create(Color.green);     //call create method from super class and pass a colour
+        create(Color.YELLOW);     //call create method from super class and pass a colour
     }
     public void setXY(int x, int y){
 
