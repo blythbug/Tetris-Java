@@ -24,6 +24,10 @@ public class tetromino {
     boolean collisionLeft, collisionRight, collisionBottom;
     public boolean active = true;
 
+    // tetromino 'slide'
+    public boolean sleep;
+    int sleepCounter = 0;
+
 
     //create method - instantiate arrays
     public void create(Color c) {
@@ -148,6 +152,11 @@ public class tetromino {
 
     public void update(){
 
+        // call 'sleep' method for block sliding
+        if(sleep){
+            sleep();
+        }
+
         // check for collisions
 
         MovementCollisionValid();
@@ -203,7 +212,7 @@ public class tetromino {
         }
 
         if(collisionBottom){
-            active = false;
+            sleep = true;
         }
         else{
 
@@ -219,6 +228,23 @@ public class tetromino {
             }
         }
 
+    }
+
+    // allow tetromino a brief time before becoming static; allows slides
+    private void sleep(){
+        sleepCounter++;
+
+        // wait 45 frames until deactivate
+        if(sleepCounter == 45){
+
+            sleepCounter = 0;
+            MovementCollisionValid();  // check if there is bottom collision
+
+            // if the bottom is still colliding after 45 frames, make tetromino static
+            if(collisionBottom){
+                active = false;
+            }
+        }
     }
     public void draw(Graphics2D g2){
 
