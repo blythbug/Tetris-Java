@@ -22,6 +22,7 @@ public class tetromino {
 
     // collisions
     boolean collisionLeft, collisionRight, collisionBottom;
+    public boolean active = true;
 
 
     //create method - instantiate arrays
@@ -163,16 +164,23 @@ public class tetromino {
             KeyHandler.upPressed = false;
         }
 
-        autoDropCounter++;     // counter increases in every frame
-        if (autoDropCounter == gameplayManage.dropInterval){
-
-            // tetromino goes down
-            b[0].y += block.SIZE;
-            b[1].y += block.SIZE;
-            b[2].y += block.SIZE;
-            b[3].y += block.SIZE;
-            autoDropCounter = 0; // reset drop counter
+        if(collisionBottom){
+            active = false;
         }
+        else{
+
+            autoDropCounter++;     // counter increases in every frame
+            if (autoDropCounter == gameplayManage.dropInterval){
+
+                // tetromino goes down
+                b[0].y += block.SIZE;
+                b[1].y += block.SIZE;
+                b[2].y += block.SIZE;
+                b[3].y += block.SIZE;
+                autoDropCounter = 0; // reset drop counter
+            }
+        }
+
     }
     public void draw(Graphics2D g2){
 

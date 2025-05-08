@@ -16,7 +16,7 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
 
         int code = e.getKeyCode();
-        if(code == KeyEvent.VK_SPACE){
+        if(code == KeyEvent.VK_P){
             if(pausePressed){
                 pausePressed = false;
             }
