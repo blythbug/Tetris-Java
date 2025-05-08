@@ -5,6 +5,7 @@ package main;
 import tetromino.*;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class gameplayManage {
@@ -22,6 +23,14 @@ public class gameplayManage {
     final int MINO_INIT_X;
     final int MINO_INIT_Y;
 
+    // Next Tetromino
+
+    tetromino nextMino;
+    final int NEXTMINO_X;
+    final int NEXTMINO_Y;
+    public static ArrayList<block> staticBlocks = new ArrayList<>();
+
+
     // tetromino drop
     public static int dropInterval = 60;   // tetromino drops every 60 frames
 
@@ -37,9 +46,17 @@ public class gameplayManage {
         MINO_INIT_X = left_x + (WIDTH/2) - block.SIZE;
         MINO_INIT_Y = top_y + block.SIZE;
 
+        // next tetromino
+        NEXTMINO_X = right_x + 175;
+        NEXTMINO_Y = top_y + 70;
+
         // initialising starting tetromino
         currentMino = pickMino();         // call pickmino to generate a random tetromino
         currentMino.setXY(MINO_INIT_X, MINO_INIT_Y);
+
+        //  pick next random tetromino
+        nextMino = pickMino();
+        nextMino.setXY(NEXTMINO_X, NEXTMINO_Y);
     }
     private tetromino pickMino(){
 
@@ -66,8 +83,25 @@ public class gameplayManage {
 
     public void update(){
 
-        currentMino.update();
+        // check if current tetromino is active
+        if(currentMino.active == false){
 
+            // if tetromino is not active, put into staticBlocks
+
+            staticBlocks.add(currentMino.b[0]);
+            staticBlocks.add(currentMino.b[1]);
+            staticBlocks.add(currentMino.b[2]);
+            staticBlocks.add(currentMino.b[3]);
+
+            // replace currentMino with nextMino
+            currentMino = nextMino;
+            currentMino.setXY(MINO_INIT_X, MINO_INIT_Y);
+            nextMino = pickMino();
+            nextMino.setXY(NEXTMINO_X,NEXTMINO_Y);
+        }
+        else{
+            currentMino.update();
+        }
     }
     public void draw(Graphics2D g2){
 
@@ -91,6 +125,14 @@ public class gameplayManage {
             //CENTRE TEST
             //g2.setColor(Color.RED);
             //g2.fillRect(MINO_INIT_X, MINO_INIT_Y, 10, 10);;
+        }
+
+        // draw next tetromino
+        nextMino.draw(g2);
+
+        // draw static blocks  - scan the static blocks and draw them one by one
+        for(int i = 0; i < staticBlocks.size(); i++){
+            staticBlocks.get(i).draw(g2);
         }
 
         // "press P to pause"
