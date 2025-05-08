@@ -34,7 +34,7 @@ public class GameArea extends JPanel implements Runnable{
 
         // button to change background image
         JButton changeBackgroundButton = new JButton("Change Background");
-        changeBackgroundButton.setBounds(WIDTH - 200,HEIGHT - 160, 150, 30); // Position and size of the button
+        changeBackgroundButton.setBounds(WIDTH - 190,HEIGHT - 160, 150, 30); // Position and size of the button
 
         // customise button
         changeBackgroundButton.setBackground(Color.black); // Set the button's background color to black
