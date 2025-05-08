@@ -55,7 +55,11 @@ public class gameplayManage {
             case 4: mino = new snake2_mino();break;
             case 5: mino = new T_mino();break;
             case 6: mino = new square_mino();break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + i);
         }
+        return mino;
     }
 
 
