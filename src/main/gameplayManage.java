@@ -93,6 +93,14 @@ public class gameplayManage {
             //g2.fillRect(MINO_INIT_X, MINO_INIT_Y, 10, 10);;
         }
 
+        // "press space to pause"
+        g2.setColor(Color.yellow);
+        g2.setFont(new Font("Arial", Font.BOLD, 15));
+        x = right_x + 115;
+        y = top_y + 220;
+        g2.drawString("Press SPACE to pause!", x, y);
+
+        // Pause button [SPACE]
         g2.setColor(Color.yellow);
         g2.setFont(new Font("Arial", Font.BOLD, 50));
         if(KeyHandler.pausePressed){
