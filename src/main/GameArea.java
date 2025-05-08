@@ -82,7 +82,12 @@ public class GameArea extends JPanel implements Runnable{
     // Update -> Update object positions, x y coordinates , score
     private void update(){
 
-        gpm.update();   // call the update method in the gameplayManage class
+        // only update onscreen game information when the game is not paused
+        if(!KeyHandler.pausePressed){
+            gpm.update();   // call the update method in the gameplayManage class
+        }
+
+
     }
 
     // Paint -> objects, UI

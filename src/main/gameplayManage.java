@@ -93,5 +93,13 @@ public class gameplayManage {
             //g2.fillRect(MINO_INIT_X, MINO_INIT_Y, 10, 10);;
         }
 
+        g2.setColor(Color.yellow);
+        g2.setFont(new Font("Arial", Font.BOLD, 50));
+        if(KeyHandler.pausePressed){
+            x = left_x + 80;
+            y = top_y + 320;
+            g2.drawString("PAUSED", x, y);
+        }
+
     }
 }
