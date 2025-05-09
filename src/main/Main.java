@@ -13,7 +13,7 @@ public class Main {
         window.setResizable(false);
         window.setLayout(new BorderLayout());
 
-        //GameArea
+        // Game Area
         GameArea ga = new GameArea();
         window.add(ga, BorderLayout.CENTER);
 
